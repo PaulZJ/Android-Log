@@ -1,4 +1,6 @@
 package com.zj.loglib.strategy;
 
-public class IRollingFileDelObserver {
+public interface IRollingFileDelObserver {
+
+    void onFileDelete(String fileName, String fileSize);
 }

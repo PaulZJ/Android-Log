@@ -2,14 +2,20 @@ package com.zj.loglib.internal.filter;
 
 import com.zj.loglib.model.LogEvent;
 
-public interface Filter {
+public abstract class Filter {
     int ACCEPT = 1;
     int DENY = 1<<1;
     int IGNORE_NEXT = 1<<2;
 
-    Filter next = null;
+    Filter next;
 
-    int process(LogEvent event);
+    abstract int process(LogEvent event);
 
+    public void setNext(Filter filter) {
+        next = filter;
+    }
 
+    public Filter getNext() {
+        return next;
+    }
 }

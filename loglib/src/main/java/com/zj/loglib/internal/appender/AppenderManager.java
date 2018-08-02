@@ -2,37 +2,70 @@ package com.zj.loglib.internal.appender;
 
 import com.zj.loglib.model.LogEvent;
 
-import java.util.LinkedList;
+import java.util.Enumeration;
+import java.util.Vector;
 
 public class AppenderManager {
 
-    private LinkedList<Appender> aai;
+    private Vector appenderList;
 
     public AppenderManager() {
-        aai = new LinkedList<>();
+        appenderList = new Vector(1);
     }
 
     public AppenderManager(Appender appender) {
         this();
-        aai.add(appender);
+        appenderList.add(appender);
     }
 
-    public void forceTrace(LogEvent event) {
-        for (Appender appender: aai) {
-            appender.doAppend(event);
+    public int forceTrace(LogEvent event) {
+        int size = 0;
+        Appender appender;
+        if (null != appenderList) {
+            size = appenderList.size();
+            for (int i = 0; i < size; i++) {
+                appender = (Appender) appenderList.elementAt(i);
+                appender.doAppend(event);
+            }
         }
+
+        return size;
     }
 
 
     public void addAppender(Appender appender) {
-        aai.add(appender);
+        if (null == appender)
+            return;
+
+        if (null == appenderList) {
+            appenderList = new Vector(1);
+        }
+
+        if (!appenderList.contains(appender)) {
+            appenderList.addElement(appender);
+        }
     }
 
-    public void removeAppender(Appender appender) {
-        aai.remove(appender);
+    public Appender getAppender(String name) {
+        if (null == appenderList || null == name)
+            return null;
+
+        int size = appenderList.size();
+        Appender appender;
+        for (int i=0; i<size; i++) {
+            appender = (Appender) appenderList.elementAt(i);
+            if (name.equals(appender.getName())) {
+                return appender;
+            }
+        }
+
+        return null;
     }
 
-    public int getAppenderSize() {
-        return aai.size();
+    public Enumeration getAllAppenders() {
+        if (null == appenderList)
+            return null;
+
+        return appenderList.elements();
     }
 }
