@@ -32,9 +32,15 @@ size_t FlushBuffer::emptySize() {
 
 void FlushBuffer::write(void *data, size_t len) {
     if (data_ptr == nullptr) {
-        capacity = fmax(capacity, len);
+        capacity = (size_t)fmax(capacity, len);
         data_ptr = new char[capacity]{0};
         write_ptr = data_ptr;
+    }
+
+    size_t empty_size = emptySize();
+    if (len < empty_size) {
+        memcpy(write_ptr, data, len);
+        write_ptr += len;
     } else {
         size_t now_len = length();
         size_t new_capacity = now_len + len;
